@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);  //added to prevent deprecation warning
 
 exports.connectDatabase = ()=>{
     mongoose
