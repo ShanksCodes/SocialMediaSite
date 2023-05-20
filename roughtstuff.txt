@@ -1,7 +1,14 @@
-21:10  50:57 1:16:40
+
 Which ever one Ctrl+/ does
 
 http://localhost:4000/api/v1
 
 
 abhi_t1 (name email pwd)
+
+suppose t4 is following t6  19 may 2023
+t4 follows t5
+t5 creates lot of posts
+t6 creates lot of posts
+t4 goes to posts url to see his followers posts
+
