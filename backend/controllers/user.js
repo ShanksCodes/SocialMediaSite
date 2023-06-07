@@ -1,12 +1,14 @@
+
 const User = require("../models/User");
 const Post = require("../models/Post");
 const {sendEmail} = require("../middlewares/sendEmail");
 const crypto = require("crypto");
+const cloudinary = require("cloudinary");
 
 exports.register = async (req, res) => {
 
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, avatar } = req.body;
 
     let user = await User.findOne({email});
     if (user) {
@@ -14,8 +16,14 @@ exports.register = async (req, res) => {
         .status (400)
         .json({ success: false, message: "User already exists" });
     }   
+
+    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+      folder: "avatars",
+    });
+
+
     user = await User.create({name,email,password,
-    avatar:{public_id:"sample_id", url:"sample_url"},
+    avatar: { public_id: myCloud.public_id, url: myCloud.secure_url },
     });  
 
     const token = await user.generateToken();
@@ -199,7 +207,7 @@ exports.followUser = async (req, res) => {
         user.email = email;
       }
   
-     /* if (avatar) {
+      if (avatar) {
         await cloudinary.v2.uploader.destroy(user.avatar.public_id);
   
         const myCloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -207,7 +215,7 @@ exports.followUser = async (req, res) => {
         });
         user.avatar.public_id = myCloud.public_id;
         user.avatar.url = myCloud.secure_url;
-      }*/
+      }
   
       await user.save();
   
@@ -233,7 +241,7 @@ exports.followUser = async (req, res) => {
       const following = user.following;
       const userId = user._id;
   
-
+      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
       await user.remove();
   
       // Logout user after deleting profile
@@ -245,6 +253,7 @@ exports.followUser = async (req, res) => {
       // Delete all posts of the user
       for (let i = 0; i < posts.length; i++) {
         const post = await Post.findById(posts[i]);
+        await cloudinary.v2.uploader.destroy(post.image.public_id);
         await post.remove();
       }
 
@@ -361,7 +370,7 @@ exports.followUser = async (req, res) => {
   
       const resetUrl = `${req.protocol}://${req.get(
         "host"
-      )}/api/v1/password/reset/${resetPasswordToken}`;
+      )}/password/reset/${resetPasswordToken}`;
   
       const message = `Reset Your Password by clicking on the link below: \n\n ${resetUrl}`;
   
