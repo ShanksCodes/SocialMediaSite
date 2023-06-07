@@ -14,6 +14,11 @@ You can now view frontend in the browser.
 
 abhi_t1 (name email pwd)
 
+
+  Local:            http://localhost:3000    
+  On Your Network:  http://192.168.0.116:3000
+
+
 suppose t4 is following t6  19 may 2023
 t4 follows t5
 t5 creates lot of posts
